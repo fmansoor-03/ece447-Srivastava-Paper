@@ -1,5 +1,5 @@
 # ece447-Srivastava-Paper
-ECE 447 Paper Project
+**ECE 447 Paper Project**
 
 Daksh - Theory lead
 
