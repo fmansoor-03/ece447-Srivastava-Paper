@@ -6,15 +6,14 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 
 # Setup & hyperparameters
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 256
-epochs = 5     # Change this for different number of tests
+epochs = 50     # Change this for different number of tests
 learning_rate = 0.01
 dropoutr = 0.5  # Dropout rate
 
 # Load data (Fashion-MNIST)
-transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 # Download the full datasets
 full_train_dataset = torchvision.datasets.FashionMNIST(root='./data', train=True, download=True, transform=transform)
 test_dataset = torchvision.datasets.FashionMNIST(root='./data', train=False, download=True, transform=transform)
@@ -73,7 +72,6 @@ def train_and_evaluate(model, name):
         correct_train, total_train = 0, 0
         
         for images, labels in train_loader:
-            images, labels = images.to(device), labels.to(device)
             
             optimizer.zero_grad()
             outputs = model(images)
@@ -94,7 +92,6 @@ def train_and_evaluate(model, name):
         
         with torch.no_grad():
             for images, labels in test_loader:
-                images, labels = images.to(device), labels.to(device)
                 outputs = model(images)
                 _, predicted = torch.max(outputs.data, 1)
                 total_test += labels.size(0)
@@ -108,8 +105,8 @@ def train_and_evaluate(model, name):
     return train_acc_history, test_acc_history
 
 # Run the experiments
-baseline_model = SimpleMLP(use_dropout=False).to(device)
-drop_model = SimpleMLP(use_dropout=True, dropout_rate=dropoutr).to(device)
+baseline_model = SimpleMLP(use_dropout=False)
+drop_model = SimpleMLP(use_dropout=True, dropout_rate=dropoutr)
 
 base_train_acc, base_test_acc = train_and_evaluate(baseline_model, "Baseline (No Dropout)")
 drop_train_acc, drop_test_acc = train_and_evaluate(drop_model, f"Model (With Dropout {dropoutr})")
